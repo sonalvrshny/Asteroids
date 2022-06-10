@@ -15,7 +15,7 @@ class Asteroids:
         # creates display surface
         # surfaces can be drawn on one another
         # have to pass size of screen in display.set_mode
-        self.screen = pygame.display.set_mode((800, 600))
+        self.screen = pygame.display.set_mode((1600, 1200))
         # set background image
         self.background = load_image("bg_image", False)
 
