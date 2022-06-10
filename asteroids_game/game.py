@@ -1,4 +1,5 @@
 import pygame
+from models import GameObject
 from utils import load_image
 
 # The general structure of a Pygame program looks like:
@@ -17,7 +18,9 @@ class Asteroids:
         # have to pass size of screen in display.set_mode
         self.screen = pygame.display.set_mode((1600, 1200))
         # set background image
-        self.background = load_image("bg_image", False)
+        self.background = load_image("bg_image.jpg", False)
+        self.spaceship = GameObject((800, 600), load_image("spaceship.png"), (0,0))
+        self.asteroid = GameObject((800, 600), load_image("asteroid.png"), (1,0))
 
     
     def main_loop(self):
@@ -38,12 +41,17 @@ class Asteroids:
                 quit()
 
     def process_game_logic(self):
-        pass
+        self.spaceship.move()
+        self.asteroid.move()
 
     def draw(self):
         # to display one surface on top of another, use blit on surface to draw on
         # first arg is the surface to draw on, second is point to draw
         self.screen.blit(self.background, (0,0))
+
+        self.spaceship.draw(self.screen)
+        self.asteroid.draw(self.screen)
+
         # updates the content of the screen 
         # this method will be called every frame to update display
         pygame.display.flip()
