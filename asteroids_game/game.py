@@ -29,7 +29,10 @@ class Asteroids:
         pygame.display.set_caption("Asteroids")
 
     def handle_input(self):
-        pass
+        # quit game
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                quit()
 
     def process_game_logic(self):
         pass
