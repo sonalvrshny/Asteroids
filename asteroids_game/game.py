@@ -1,4 +1,5 @@
 import pygame
+from utils import load_image
 
 # The general structure of a Pygame program looks like:
 # initialize_pygame()
@@ -15,6 +16,8 @@ class Asteroids:
         # surfaces can be drawn on one another
         # have to pass size of screen in display.set_mode
         self.screen = pygame.display.set_mode((800, 600))
+        # set background image
+        self.background = load_image("bg_image", False)
 
     
     def main_loop(self):
@@ -38,7 +41,9 @@ class Asteroids:
         pass
 
     def draw(self):
-        self.screen.fill((0, 0, 255))
+        # to display one surface on top of another, use blit on surface to draw on
+        # first arg is the surface to draw on, second is point to draw
+        self.screen.blit(self.background, (0,0))
         # updates the content of the screen 
         # this method will be called every frame to update display
         pygame.display.flip()
