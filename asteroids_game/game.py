@@ -13,6 +13,12 @@ class Asteroids:
     def __init__(self):
         # initializes game
         self.init_pygame()
+        # have to make sure game runs similarly on diff processors
+        # asteroids and bullets should have same relative velocity
+        # otherwise game may be easier or harder depending on processor
+        # to ensure uniformity, use pygame.time.Clock - will wait to 
+        # match FPS value
+        self.clock = pygame.time.Clock()
         # creates display surface
         # surfaces can be drawn on one another
         # have to pass size of screen in display.set_mode
@@ -55,3 +61,5 @@ class Asteroids:
         # updates the content of the screen 
         # this method will be called every frame to update display
         pygame.display.flip()
+        # will run at 60 fps
+        self.clock.tick(60)
