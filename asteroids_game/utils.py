@@ -4,7 +4,7 @@
 from pygame.image import load
 
 def load_image(name, with_alpha=True):
-    path = f"assets/sprites/{name}.jpg"
+    path = f"assets/sprites/{name}"
     # load method returns a surface -used by Pygame to represent images
     loaded_image = load(path)
 
