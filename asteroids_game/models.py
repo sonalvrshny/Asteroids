@@ -8,7 +8,6 @@
 
 # vectors are like tuples - can point to position but also rep motion or acceleration
 
-from pygame import Surface
 from pygame.math import Vector2
 from pygame.transform import rotozoom
 
@@ -46,8 +45,13 @@ class Spaceship(GameObject):
     # determines how fast spaceship can rotate
     MANEUVERABILITY = 3
     ACCELERATION = 0.15
+    BULLET_SPEED = 5
 
-    def __init__(self, position):
+    # bullet is a main game object but should be created by the spaceship
+    # this is why a callback is being used; everytime spaceship creates a bullet,
+    # it will initialize a BUllet then call the callback
+    def __init__(self, position, create_bullet_callback):
+        self.create_bullet_callback = create_bullet_callback
         # make copy of original vector UP
         self.direction = Vector2(UP)
         super().__init__(position, load_image("spaceship.png"), Vector2(0))
@@ -76,6 +80,19 @@ class Spaceship(GameObject):
     def decelerate(self):
         self.velocity -= self.direction * self.ACCELERATION
 
+    def shoot(self):
+        bullet_velocity = self.direction * self.BULLET_SPEED + self.velocity
+        bullet = Bullet(self.position, bullet_velocity)
+        self.create_bullet_callback(bullet)
+
 class Asteroid(GameObject):
     def __init__(self, position):
         super().__init__(position, load_image("asteroid.png"), random_velocity(1,3))
+
+class Bullet(GameObject):
+    def __init__(self, position, velocity):
+        super().__init__(position, load_image("bullet.png"), velocity)
+
+    # overriding move function as we don't want bullets to wrap around screen
+    def move(self, surface):
+        self.position = self.position + self.velocity
