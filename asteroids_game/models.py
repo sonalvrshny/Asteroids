@@ -13,7 +13,7 @@ from pygame.math import Vector2
 from pygame.transform import rotozoom
 
 
-from utils import load_image, wrap_position
+from utils import load_image, wrap_position, random_velocity
 
 
 # ref variables
@@ -78,4 +78,4 @@ class Spaceship(GameObject):
 
 class Asteroid(GameObject):
     def __init__(self, position):
-        super().__init__(position, load_image("asteroid.png"), Vector2(0))
+        super().__init__(position, load_image("asteroid.png"), random_velocity(1,3))
