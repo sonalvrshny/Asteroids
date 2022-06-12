@@ -40,7 +40,12 @@ class Asteroids:
 
     # helper method that can be used to return all objects being used in game
     def get_game_objects(self):
-        return [*self.asteroids, self.spaceship]
+        game_objects = [*self.asteroids]
+
+        # have to make sure destroyed spaceship is not added
+        if self.spaceship:
+            game_objects.append(self.spaceship)
+        return game_objects
     
     def main_loop(self):
         while True:
@@ -59,22 +64,31 @@ class Asteroids:
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 quit()
 
-        # change direction of spaceship
-        is_key_pressed = pygame.key.get_pressed()
-        if is_key_pressed[pygame.K_RIGHT]:
-            self.spaceship.rotate(clockwise=True)
-        elif is_key_pressed[pygame.K_LEFT]:
-            self.spaceship.rotate(clockwise=False)
+        # if spaceship is not destroyed
+        if self.spaceship:
+            # change direction of spaceship
+            is_key_pressed = pygame.key.get_pressed()
+            if is_key_pressed[pygame.K_RIGHT]:
+                self.spaceship.rotate(clockwise=True)
+            elif is_key_pressed[pygame.K_LEFT]:
+                self.spaceship.rotate(clockwise=False)
 
-        # ac/decelerate the spaceship
-        if is_key_pressed[pygame.K_UP]:
-            self.spaceship.accelerate()
-        elif is_key_pressed[pygame.K_DOWN]:
-            self.spaceship.decelerate()
+            # ac/decelerate the spaceship
+            if is_key_pressed[pygame.K_UP]:
+                self.spaceship.accelerate()
+            elif is_key_pressed[pygame.K_DOWN]:
+                self.spaceship.decelerate()
 
     def process_game_logic(self):
         for object in self.get_game_objects():
             object.move(self.screen)
+
+        if self.spaceship:
+            for asteroid in self.asteroids:
+                if asteroid.collides_with(self.spaceship):
+                    self.spaceship = None
+                    break
+
 
     def draw(self):
         # to display one surface on top of another, use blit on surface to draw on

@@ -45,7 +45,7 @@ class GameObject:
 class Spaceship(GameObject):
     # determines how fast spaceship can rotate
     MANEUVERABILITY = 3
-    ACCELERATION = 0.25
+    ACCELERATION = 0.15
 
     def __init__(self, position):
         # make copy of original vector UP
