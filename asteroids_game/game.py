@@ -1,6 +1,7 @@
 import pygame
 from models import GameObject
 from utils import load_image
+from models import Spaceship
 
 # The general structure of a Pygame program looks like:
 # initialize_pygame()
@@ -25,8 +26,7 @@ class Asteroids:
         self.screen = pygame.display.set_mode((1600, 1200))
         # set background image
         self.background = load_image("bg_image.jpg", False)
-        self.spaceship = GameObject((800, 600), load_image("spaceship.png"), (0,0))
-        self.asteroid = GameObject((800, 600), load_image("asteroid.png"), (1,0))
+        self.spaceship = Spaceship((800,600))
 
     
     def main_loop(self):
@@ -46,9 +46,21 @@ class Asteroids:
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 quit()
 
+        # change direction of spaceship
+        is_key_pressed = pygame.key.get_pressed()
+        if is_key_pressed[pygame.K_RIGHT]:
+            self.spaceship.rotate(clockwise=True)
+        elif is_key_pressed[pygame.K_LEFT]:
+            self.spaceship.rotate(clockwise=False)
+
+        # ac/decelerate the spaceship
+        if is_key_pressed[pygame.K_UP]:
+            self.spaceship.accelerate()
+        elif is_key_pressed[pygame.K_DOWN]:
+            self.spaceship.decelerate()
+
     def process_game_logic(self):
-        self.spaceship.move()
-        self.asteroid.move()
+        self.spaceship.move(self.screen)
 
     def draw(self):
         # to display one surface on top of another, use blit on surface to draw on
@@ -56,7 +68,6 @@ class Asteroids:
         self.screen.blit(self.background, (0,0))
 
         self.spaceship.draw(self.screen)
-        self.asteroid.draw(self.screen)
 
         # updates the content of the screen 
         # this method will be called every frame to update display
