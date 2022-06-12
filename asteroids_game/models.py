@@ -13,7 +13,7 @@ from pygame.math import Vector2
 from pygame.transform import rotozoom
 
 
-from utils import load_image, wrap_position
+from utils import load_image, wrap_position, random_velocity
 
 
 # ref variables
@@ -45,7 +45,7 @@ class GameObject:
 class Spaceship(GameObject):
     # determines how fast spaceship can rotate
     MANEUVERABILITY = 3
-    ACCELERATION = 0.25
+    ACCELERATION = 0.15
 
     def __init__(self, position):
         # make copy of original vector UP
@@ -75,3 +75,7 @@ class Spaceship(GameObject):
 
     def decelerate(self):
         self.velocity -= self.direction * self.ACCELERATION
+
+class Asteroid(GameObject):
+    def __init__(self, position):
+        super().__init__(position, load_image("asteroid.png"), random_velocity(1,3))

@@ -1,7 +1,7 @@
 import pygame
 from models import GameObject
-from utils import load_image
-from models import Spaceship
+from utils import load_image, random_position
+from models import Spaceship, Asteroid
 
 # The general structure of a Pygame program looks like:
 # initialize_pygame()
@@ -27,7 +27,25 @@ class Asteroids:
         # set background image
         self.background = load_image("bg_image.jpg", False)
         self.spaceship = Spaceship((800,600))
+        # include 6 asteroids at random positions
+        # have to make sure that any asteroid does not start in region of spaceship
+        self.asteroids = []
+        for _ in range(6):
+            while True:
+                position = random_position(self.screen)
+                if (position.distance_to(self.spaceship.position)) > 250:
+                    break
+            self.asteroids.append(Asteroid(position))
+        
 
+    # helper method that can be used to return all objects being used in game
+    def get_game_objects(self):
+        game_objects = [*self.asteroids]
+
+        # have to make sure destroyed spaceship is not added
+        if self.spaceship:
+            game_objects.append(self.spaceship)
+        return game_objects
     
     def main_loop(self):
         while True:
@@ -46,28 +64,39 @@ class Asteroids:
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 quit()
 
-        # change direction of spaceship
-        is_key_pressed = pygame.key.get_pressed()
-        if is_key_pressed[pygame.K_RIGHT]:
-            self.spaceship.rotate(clockwise=True)
-        elif is_key_pressed[pygame.K_LEFT]:
-            self.spaceship.rotate(clockwise=False)
+        # if spaceship is not destroyed
+        if self.spaceship:
+            # change direction of spaceship
+            is_key_pressed = pygame.key.get_pressed()
+            if is_key_pressed[pygame.K_RIGHT]:
+                self.spaceship.rotate(clockwise=True)
+            elif is_key_pressed[pygame.K_LEFT]:
+                self.spaceship.rotate(clockwise=False)
 
-        # ac/decelerate the spaceship
-        if is_key_pressed[pygame.K_UP]:
-            self.spaceship.accelerate()
-        elif is_key_pressed[pygame.K_DOWN]:
-            self.spaceship.decelerate()
+            # ac/decelerate the spaceship
+            if is_key_pressed[pygame.K_UP]:
+                self.spaceship.accelerate()
+            elif is_key_pressed[pygame.K_DOWN]:
+                self.spaceship.decelerate()
 
     def process_game_logic(self):
-        self.spaceship.move(self.screen)
+        for object in self.get_game_objects():
+            object.move(self.screen)
+
+        if self.spaceship:
+            for asteroid in self.asteroids:
+                if asteroid.collides_with(self.spaceship):
+                    self.spaceship = None
+                    break
+
 
     def draw(self):
         # to display one surface on top of another, use blit on surface to draw on
         # first arg is the surface to draw on, second is point to draw
         self.screen.blit(self.background, (0,0))
 
-        self.spaceship.draw(self.screen)
+        for object in self.get_game_objects():
+            object.draw(self.screen)
 
         # updates the content of the screen 
         # this method will be called every frame to update display
