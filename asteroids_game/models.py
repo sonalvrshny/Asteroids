@@ -75,3 +75,7 @@ class Spaceship(GameObject):
 
     def decelerate(self):
         self.velocity -= self.direction * self.ACCELERATION
+
+class Asteroid(GameObject):
+    def __init__(self, position):
+        super().__init__(position, load_image("asteroid.png"), Vector2(0))

@@ -1,7 +1,7 @@
 import pygame
 from models import GameObject
-from utils import load_image
-from models import Spaceship
+from utils import load_image, random_position
+from models import Spaceship, Asteroid
 
 # The general structure of a Pygame program looks like:
 # initialize_pygame()
@@ -27,7 +27,20 @@ class Asteroids:
         # set background image
         self.background = load_image("bg_image.jpg", False)
         self.spaceship = Spaceship((800,600))
+        # include 6 asteroids at random positions
+        # have to make sure that any asteroid does not start in region of spaceship
+        self.asteroids = []
+        for _ in range(6):
+            while True:
+                position = random_position(self.screen)
+                if (position.distance_to(self.spaceship.position)) > 250:
+                    break
+            self.asteroids.append(Asteroid(position))
+        
 
+    # helper method that can be used to return all objects being used in game
+    def get_game_objects(self):
+        return [*self.asteroids, self.spaceship]
     
     def main_loop(self):
         while True:
@@ -60,14 +73,16 @@ class Asteroids:
             self.spaceship.decelerate()
 
     def process_game_logic(self):
-        self.spaceship.move(self.screen)
+        for object in self.get_game_objects():
+            object.move(self.screen)
 
     def draw(self):
         # to display one surface on top of another, use blit on surface to draw on
         # first arg is the surface to draw on, second is point to draw
         self.screen.blit(self.background, (0,0))
 
-        self.spaceship.draw(self.screen)
+        for object in self.get_game_objects():
+            object.draw(self.screen)
 
         # updates the content of the screen 
         # this method will be called every frame to update display
