@@ -46,8 +46,21 @@ class Asteroids:
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 quit()
 
+        # change direction of spaceship
+        is_key_pressed = pygame.key.get_pressed()
+        if is_key_pressed[pygame.K_RIGHT]:
+            self.spaceship.rotate(clockwise=True)
+        elif is_key_pressed[pygame.K_LEFT]:
+            self.spaceship.rotate(clockwise=False)
+
+        # ac/decelerate the spaceship
+        if is_key_pressed[pygame.K_UP]:
+            self.spaceship.accelerate()
+        elif is_key_pressed[pygame.K_DOWN]:
+            self.spaceship.decelerate()
+
     def process_game_logic(self):
-        self.spaceship.move()
+        self.spaceship.move(self.screen)
 
     def draw(self):
         # to display one surface on top of another, use blit on surface to draw on
