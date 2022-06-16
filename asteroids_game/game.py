@@ -36,7 +36,7 @@ class Asteroids:
                 position = random_position(self.screen)
                 if (position.distance_to(self.spaceship.position)) > 250:
                     break
-            self.asteroids.append(Asteroid(position))
+            self.asteroids.append(Asteroid(position, self.asteroids.append))
         
 
     # helper method that can be used to return all objects being used in game
@@ -99,6 +99,7 @@ class Asteroids:
                 if asteroid.collides_with(bullet):
                     self.asteroids.remove(asteroid)
                     self.bullets.remove(bullet)
+                    asteroid.split()
                     break
 
         # remove bullets if they leave the screen to improve performance
