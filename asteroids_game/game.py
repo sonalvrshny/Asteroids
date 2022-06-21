@@ -1,6 +1,6 @@
 import pygame
 from models import GameObject
-from utils import load_image, random_position, print_text
+from utils import load_image, random_position, print_text, load_sound
 from models import Spaceship, Asteroid
 
 # The general structure of a Pygame program looks like:
@@ -29,10 +29,10 @@ class Asteroids:
         self.screen = pygame.display.set_mode((1600, 1200))
         # set background image
         self.background = load_image("bg_image.jpg", False)
+        self.destroy_sound = load_sound("destroy")
         # set text font and message
         self.font = pygame.font.Font(None, 128)
         self.message = ""
-        self.status = None
 
         self.bullets = []
         self.asteroids = []
@@ -99,8 +99,7 @@ class Asteroids:
             for asteroid in self.asteroids:
                 if asteroid.collides_with(self.spaceship):
                     self.spaceship = None
-                    self.message = "You lost!"
-                    self.status = LOST
+                    self.message = LOST
                     break
         
         # collide with asteroids
@@ -110,6 +109,7 @@ class Asteroids:
                     self.asteroids.remove(asteroid)
                     self.bullets.remove(bullet)
                     asteroid.split()
+                    self.destroy_sound.play()
                     break
 
         # remove bullets if they leave the screen to improve performance
@@ -118,8 +118,7 @@ class Asteroids:
                 self.bullets.remove(bullet)
 
         if not self.asteroids and self.spaceship:
-            self.message = "You won!"
-            self.status = WON
+            self.message = WON
 
 
 
@@ -133,9 +132,9 @@ class Asteroids:
 
         # if the game is over, message should be displayed based on result
         if self.message:
-            if self.status == WON:
-                print_text(self.screen, self.message, self.font, pygame.Color("darkseagreen"))
-            elif self.status == LOST:
+            if self.message == WON:
+                print_text(self.screen, self.message, self.font, pygame.Color("darkgreen"))
+            elif self.message == LOST:
                 print_text(self.screen, self.message, self.font, pygame.Color("tomato"))            
 
         # updates the content of the screen 
