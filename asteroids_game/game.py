@@ -1,6 +1,6 @@
 import pygame
 from models import GameObject
-from utils import load_image, random_position
+from utils import load_image, random_position, print_text
 from models import Spaceship, Asteroid
 
 # The general structure of a Pygame program looks like:
@@ -9,6 +9,9 @@ from models import Spaceship, Asteroid
 #     handle_input()
 #     process_game_logic()
 #     draw_game_elements()
+
+LOST = "You lost!"
+WON = "You won!"
 
 class Asteroids:
     def __init__(self):
@@ -26,12 +29,17 @@ class Asteroids:
         self.screen = pygame.display.set_mode((1600, 1200))
         # set background image
         self.background = load_image("bg_image.jpg", False)
+        # set text font and message
+        self.font = pygame.font.Font(None, 128)
+        self.message = ""
+        self.status = None
+
         self.bullets = []
         self.asteroids = []
         self.spaceship = Spaceship((800,600), self.bullets.append)
         # include 6 asteroids at random positions
         # have to make sure that any asteroid does not start in region of spaceship
-        for _ in range(6):
+        for _ in range(1):
             while True:
                 position = random_position(self.screen)
                 if (position.distance_to(self.spaceship.position)) > 250:
@@ -91,6 +99,8 @@ class Asteroids:
             for asteroid in self.asteroids:
                 if asteroid.collides_with(self.spaceship):
                     self.spaceship = None
+                    self.message = "You lost!"
+                    self.status = LOST
                     break
         
         # collide with asteroids
@@ -107,6 +117,11 @@ class Asteroids:
             if not self.screen.get_rect().collidepoint(bullet.position):
                 self.bullets.remove(bullet)
 
+        if not self.asteroids and self.spaceship:
+            self.message = "You won!"
+            self.status = WON
+
+
 
     def draw(self):
         # to display one surface on top of another, use blit on surface to draw on
@@ -115,6 +130,13 @@ class Asteroids:
 
         for object in self.get_game_objects():
             object.draw(self.screen)
+
+        # if the game is over, message should be displayed based on result
+        if self.message:
+            if self.status == WON:
+                print_text(self.screen, self.message, self.font, pygame.Color("darkseagreen"))
+            elif self.status == LOST:
+                print_text(self.screen, self.message, self.font, pygame.Color("tomato"))            
 
         # updates the content of the screen 
         # this method will be called every frame to update display

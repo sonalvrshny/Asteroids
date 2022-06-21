@@ -5,6 +5,7 @@ import random
 
 from pygame.image import load
 from pygame.mixer import Sound
+from pygame import Color
 from pygame.math import Vector2
 
 def load_image(name, with_alpha=True):
@@ -22,6 +23,15 @@ def load_image(name, with_alpha=True):
 def load_sound(name):
     path = f"assets/sounds/{name}.wav"
     return Sound(path)
+
+def print_text(surface, text, font, color):
+    # render has 3 args - the text, antialiasing flag for smoothening edges and color
+    text_surface = font.render(text, True, color)
+
+    rect = text_surface.get_rect()
+    rect.center = Vector2(surface.get_size()) / 2
+
+    surface.blit(text_surface, rect)
 
 # so objects wrap around the screen instead of exiting
 def wrap_position(position, surface):
