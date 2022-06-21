@@ -4,6 +4,7 @@
 import random
 
 from pygame.image import load
+from pygame.mixer import Sound
 from pygame.math import Vector2
 
 def load_image(name, with_alpha=True):
@@ -17,6 +18,10 @@ def load_image(name, with_alpha=True):
         return loaded_image.convert_alpha()
     else:
         return loaded_image.convert()
+
+def load_sound(name):
+    path = f"assets/sounds/{name}.wav"
+    return Sound(path)
 
 # so objects wrap around the screen instead of exiting
 def wrap_position(position, surface):
