@@ -1,7 +1,7 @@
 import pygame
 from models import GameObject
 from utils import load_image, random_position, print_text, load_sound
-from models import Spaceship, Asteroid
+from models import Spaceship, Asteroid, Life
 
 # The general structure of a Pygame program looks like:
 # initialize_pygame()
@@ -33,23 +33,26 @@ class Asteroids:
         # set text font and message
         self.font = pygame.font.Font(None, 128)
         self.message = ""
-
         self.bullets = []
         self.asteroids = []
+        self.num_lives_left = 3
+        self.lives = []
         self.spaceship = Spaceship((800,600), self.bullets.append)
         # include 6 asteroids at random positions
         # have to make sure that any asteroid does not start in region of spaceship
-        for _ in range(1):
+        for _ in range(6):
             while True:
                 position = random_position(self.screen)
                 if (position.distance_to(self.spaceship.position)) > 250:
                     break
             self.asteroids.append(Asteroid(position, self.asteroids.append))
-        
 
+        self.reduce_life(self.num_lives_left)
+            
+        
     # helper method that can be used to return all objects being used in game
     def get_game_objects(self):
-        game_objects = [*self.asteroids, *self.bullets]
+        game_objects = [*self.asteroids, *self.bullets, *self.lives]
 
         # have to make sure destroyed spaceship is not added
         if self.spaceship:
@@ -98,10 +101,16 @@ class Asteroids:
         if self.spaceship:
             for asteroid in self.asteroids:
                 if asteroid.collides_with(self.spaceship):
-                    self.spaceship = None
-                    self.message = LOST
-                    break
-        
+                    if self.num_lives_left == 0:
+                        self.spaceship = None
+                        self.message = LOST
+                        break
+                    self.lives = []
+                    self.num_lives_left -= 1
+                    self.reduce_life(self.num_lives_left)
+                    self.spaceship.reset_ship()
+                    
+                    
         # collide with asteroids
         for bullet in self.bullets[:]:
             for asteroid in self.asteroids[:]:
@@ -120,7 +129,12 @@ class Asteroids:
         if not self.asteroids and self.spaceship:
             self.message = WON
 
-
+    def reduce_life(self, num_lives):
+        x = 50
+        for _ in range(num_lives):
+            position = (x,50)
+            self.lives.append(Life(position))
+            x += 50
 
     def draw(self):
         # to display one surface on top of another, use blit on surface to draw on

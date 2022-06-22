@@ -49,7 +49,7 @@ class Spaceship(GameObject):
 
     # bullet is a main game object but should be created by the spaceship
     # this is why a callback is being used; everytime spaceship creates a bullet,
-    # it will initialize a BUllet then call the callback
+    # it will initialize a Bullet then call the callback
     def __init__(self, position, create_bullet_callback):
         self.create_bullet_callback = create_bullet_callback
         self.laser_sound = load_sound("laser")
@@ -87,6 +87,10 @@ class Spaceship(GameObject):
         self.create_bullet_callback(bullet)
         self.laser_sound.play()
 
+    def reset_ship(self):
+        self.position = Vector2((800,600))
+        self.velocity = Vector2(0)
+
 class Asteroid(GameObject):
     def __init__(self, position, create_asteroid_callback, size=3):
         self.create_asteroid_callback = create_asteroid_callback
@@ -116,3 +120,7 @@ class Bullet(GameObject):
     # overriding move function as we don't want bullets to wrap around screen
     def move(self, surface):
         self.position = self.position + self.velocity
+
+class Life(GameObject):
+    def __init__(self, position):
+        super().__init__(position, load_image("heart.png"), velocity=0)
